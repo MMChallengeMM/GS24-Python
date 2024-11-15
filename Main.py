@@ -1,7 +1,5 @@
 from datetime import datetime
 
-ultimos_calculos = []
-
 def calcular_emissao(consumo, fator):
     return consumo * fator
 
@@ -185,7 +183,7 @@ def iniciar_calculo():
     total_emissao = valor_emissao_alimento + valor_emissao_energia + valor_emissao_veiculo
 
     ultimos_calculos.append({
-        "data_criacao": datetime.now(), #.strftime("%d/%m/%Y"),
+        "data_criacao": datetime.now().date().strftime("%d/%m/%Y"), #.strftime("%d/%m/%Y")
         "valor_emissao_veiculo":valor_emissao_veiculo,
         "valor_emissao_energia":valor_emissao_energia,
         "valor_emissao_alimento":valor_emissao_alimento,
@@ -198,12 +196,48 @@ def iniciar_calculo():
           f"Em geral você produziu {total_emissao} kg de CO2")
 
 
+def ver_dados():
+
+    sum_total_emissao_carbono = 0
+
+    maior_emissao_carbono = {
+        "data_criacao":datetime,
+        "total_emissao": 0
+    }
+    menor_emissao_carbono = {
+        "data_criacao": datetime,
+        "total_emissao": 999999999999999999999999999999
+    }
+
+    for calculo in ultimos_calculos:
+        sum_total_emissao_carbono += calculo["total_emissao"]
+
+        if calculo["total_emissao"] > maior_emissao_carbono["total_emissao"]:
+            maior_emissao_carbono = calculo
+
+
+        if calculo["total_emissao"] < menor_emissao_carbono["total_emissao"]:
+            menor_emissao_carbono = calculo
+
+    media_emissao = sum_total_emissao_carbono/len(ultimos_calculos)
+
+
+    print("Aqui estão seus dados:\n"
+          f"O total de carbono gerado por você foi de {sum_total_emissao_carbono:.2f} kg de CO2\n"
+          f"Seu calculo de emissão do dia {maior_emissao_carbono["data_criacao"]} foi o que mais gerou CO2, gerando {maior_emissao_carbono["total_emissao"]} kg de CO2\n"
+          f"Seu calculo de emissão do dia {menor_emissao_carbono["data_criacao"]} foi o que menos gerou CO2, gerando {menor_emissao_carbono["total_emissao"]} kg de CO2\n"
+          f"Em média você gera {media_emissao:.2f} kg de CO2\n")
+
+
+ultimos_calculos = []
+
 while True:
     try:
         print("\nBem vindo ao GreenPrint\n"
               "1. Iniciar calculo de emissão de carbono\n"
-              "2. Ver dados"
-              "0. Sair\n")
+              "2. Ver ultimos dados\n"
+              "0. Sair\n"
+              "===========================================================")
 
         opcao = int(input("Digite a opção desejada:\n"))
 
@@ -214,7 +248,7 @@ while True:
             case 1:
                 iniciar_calculo()
             case 2:
-                print(ultimos_calculos)
+                ver_dados()
             case _:
                 print("Opção inválida")
     except ValueError:
